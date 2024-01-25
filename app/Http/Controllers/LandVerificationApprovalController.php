@@ -13,13 +13,6 @@ use App\Mail\LandVerificationMail;
 class LandVerificationApprovalController extends Controller
 {
     public function LandVerificationApprovalMail(Request $request) {
-        $callback = array(
-            'data' => null,
-            'Error' => false,
-            'Pesan' => '',
-            'Status' => 200
-        );
-
         $list_of_urls = explode(';', $request->url_link);
 
         $url_data = [];

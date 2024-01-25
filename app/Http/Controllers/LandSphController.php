@@ -13,13 +13,6 @@ use App\Mail\UserEmail;
 class LandSphController extends Controller
 {
     public function LandSphMail(Request $request) {
-        $callback = array(
-            'data' => null,
-            'Error' => false,
-            'Pesan' => '',
-            'Status' => 200
-        );
-
         $sph_amt = number_format($request->sph_amt, 2, '.', ',');
         $book_amt = number_format($request->book_amt, 2, '.', ',');
         $total_amt = number_format($request->total_amt, 2, '.', ',');
@@ -54,14 +47,25 @@ class LandSphController extends Controller
             'body'          => 'Please Approve '.$request->descs,
         );
 
-        $sendToEmail = strtolower($request->email_addr);
-        if(isset($sendToEmail) && !empty($sendToEmail) && filter_var($sendToEmail, FILTER_VALIDATE_EMAIL))
-        {
-            Mail::to($sendToEmail)
-                ->send(new LandSphMail($dataArray));
-            $callback['Error'] = false;
-            $callback['Pesan'] = 'sendToEmail';
-            echo json_encode($callback);
+        try {
+            $emailAddresses = $request->email_addr;
+            // Check if email addresses are provided and not empty
+            if(isset($emailAddresses) && !empty($emailAddresses) && filter_var($emailAddresses, FILTER_VALIDATE_EMAIL)) {
+                $emails = is_array($emailAddresses) ? $emailAddresses : [$emailAddresses];
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new LandSphMail($dataArray));
+                }
+                
+                $sentTo = is_array($emailAddresses) ? implode(', ', $emailAddresses) : $emailAddresses;
+                Log::channel('sendmail')->info('Email berhasil dikirim ke: ' . $sentTo);
+                return "Email berhasil dikirim ke: " . $sentTo;
+            } else {
+                Log::channel('sendmail')->warning('Tidak ada alamat email yang diberikan.');
+                return "Tidak ada alamat email yang diberikan.";
+            }
+        } catch (\Exception $e) {
+            Log::channel('sendmail')->error('Gagal mengirim email: ' . $e->getMessage());
+            return "Gagal mengirim email: " . $e->getMessage();
         }
     }
 

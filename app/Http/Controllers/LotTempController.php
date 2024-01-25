@@ -17,13 +17,6 @@ use App\Mail\UserEmail;
 class LotTempController extends Controller
 {
     public function Mail(Request $request) {
-        $callback = array(
-            'data' => null,
-            'Error' => false,
-            'Pesan' => '',
-            'Status' => 200
-        );
-
         $formattedNumber = number_format($request->land_area, 2, '.', ',');
 
         $dataArray = array(
