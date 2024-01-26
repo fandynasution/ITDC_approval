@@ -9,8 +9,8 @@ class ConnectionController extends Controller
 {
     public function index() {
         try {
-           $dbconnect = DB::connection('SSI')->getPDO();
-           $dbname = DB::connection('SSI')->getDatabaseName();
+           $dbconnect = DB::connection('ITDC')->getPDO();
+           $dbname = DB::connection('ITDC')->getDatabaseName();
            echo "Connected successfully to the database. Database name is :".$dbname;
         } catch(Exception $e) {
            echo "Error in connecting to the database";

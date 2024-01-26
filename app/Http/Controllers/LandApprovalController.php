@@ -85,12 +85,12 @@ class LandApprovalController extends Controller
             'type'          => 'B',
             'module'        => 'LM',
         );
-        $query = DB::connection('SSI')
+        $query = DB::connection('ITDC')
         ->table('mgr.cb_cash_request_appr')
         ->where($where2)
         ->get();
 
-        $query3 = DB::connection('SSI')
+        $query3 = DB::connection('ITDC')
         ->table('mgr.cb_cash_request_appr')
         ->where($where3)
         ->get();
@@ -140,7 +140,7 @@ class LandApprovalController extends Controller
         $level_no = $request->level_no;
         $remarks = $request->remarks;
         if($status == 'A') {
-            $pdo = DB::connection('SSI')->getPdo();
+            $pdo = DB::connection('ITDC')->getPdo();
             $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_land_map ?, ?, ?, ?, ?;");
             $sth->bindParam(1, $entity_cd);
             $sth->bindParam(2, $doc_no);
@@ -160,7 +160,7 @@ class LandApprovalController extends Controller
                 $image = "reject.png";
             }
         } else if($status == 'R'){
-            $pdo = DB::connection('SSI')->getPdo();
+            $pdo = DB::connection('ITDC')->getPdo();
             $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_land_map ?, ?, ?, ?, ?;");
             $sth->bindParam(1, $entity_cd);
             $sth->bindParam(2, $doc_no);
@@ -180,7 +180,7 @@ class LandApprovalController extends Controller
                 $image = "reject.png";
             }
         } else {
-            $pdo = DB::connection('SSI')->getPdo();
+            $pdo = DB::connection('ITDC')->getPdo();
             $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_land_map ?, ?, ?, ?, ?;");
             $sth->bindParam(1, $entity_cd);
             $sth->bindParam(2, $doc_no);

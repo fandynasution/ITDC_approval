@@ -86,7 +86,7 @@ class ShgbMergerController extends Controller
             'type'          => 'J',
             'module'        => 'LM',
         );
-        $query = DB::connection('SSI')
+        $query = DB::connection('ITDC')
         ->table('mgr.cb_cash_request_appr')
         ->where($where)
         ->get();
@@ -150,7 +150,7 @@ class ShgbMergerController extends Controller
             $statusdesc = "Cancelled";
             $image = "reject.png";
         }
-        $pdo = DB::connection('SSI')->getPdo();
+        $pdo = DB::connection('ITDC')->getPdo();
         $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_land_sft_merge_shgb ?, ?, ?, ?, ?;");
         $sth->bindParam(1, $entity_cd);
         $sth->bindParam(2, $doc_no);

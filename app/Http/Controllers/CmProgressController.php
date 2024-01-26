@@ -94,12 +94,12 @@ class CmProgressController extends Controller
             'type'          => 'A',
             'module'        => 'CM',
         );
-        $query = DB::connection('SSI')
+        $query = DB::connection('ITDC')
         ->table('mgr.cb_cash_request_appr')
         ->where($where2)
         ->get();
 
-        $query3 = DB::connection('SSI')
+        $query3 = DB::connection('ITDC')
         ->table('mgr.cb_cash_request_appr')
         ->where($where3)
         ->get();
@@ -116,7 +116,7 @@ class CmProgressController extends Controller
             );
         } else {
             if($status == 'A') {
-                $pdo = DB::connection('SSI')->getPdo();
+                $pdo = DB::connection('ITDC')->getPdo();
                 $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_cm_progress ?, ?, ?, ?, ?, ?, ?, ?, ?;");
                 $sth->bindParam(1, $entity_cd);
                 $sth->bindParam(2, $project_no);
@@ -140,7 +140,7 @@ class CmProgressController extends Controller
                     $image = "reject.png";
                 }
             } else if($status == 'R'){
-                $pdo = DB::connection('SSI')->getPdo();
+                $pdo = DB::connection('ITDC')->getPdo();
                 $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_cm_progress ?, ?, ?, ?, ?, ?, ?, ?, ?;");
                 $sth->bindParam(1, $entity_cd);
                 $sth->bindParam(2, $project_no);
@@ -164,7 +164,7 @@ class CmProgressController extends Controller
                     $image = "reject.png";
                 }
             } else {
-                $pdo = DB::connection('SSI')->getPdo();
+                $pdo = DB::connection('ITDC')->getPdo();
                 $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_cm_progress ?, ?, ?, ?, ?, ?, ?, ?, ?;");
                 $sth->bindParam(1, $entity_cd);
                 $sth->bindParam(2, $project_no);
