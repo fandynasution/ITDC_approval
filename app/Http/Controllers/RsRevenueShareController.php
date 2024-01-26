@@ -12,13 +12,6 @@ use Illuminate\Support\Facades\DB;
 class RsRevenueShareController extends Controller
 {
     public function Mail(Request $request) {
-        $callback = array(
-            'data' => null,
-            'Error' => false,
-            'Pesan' => '',
-            'Status' => 200
-        );
-
         $total_sales = number_format($request->total_sales, 2, '.', ',');
         $tariff_percent = number_format($request->tariff_percent, 2, '.', ',');
         $tariff_amt = number_format($request->tariff_amt, 2, '.', ',');
@@ -52,14 +45,25 @@ class RsRevenueShareController extends Controller
             'link'          => 'revenueshare'
         );
 
-        $sendToEmail = strtolower($request->email_addr);
-        if(isset($sendToEmail) && !empty($sendToEmail) && filter_var($sendToEmail, FILTER_VALIDATE_EMAIL))
-        {
-            Mail::to($sendToEmail)
-                ->send(new RsRevenueMail($dataArray));
-            $callback['Error'] = false;
-            $callback['Pesan'] = 'sendToEmail';
-            echo json_encode($callback);
+        try {
+            $emailAddresses = $request->email_addr;
+            // Check if email addresses are provided and not empty
+            if(isset($emailAddresses) && !empty($emailAddresses) && filter_var($emailAddresses, FILTER_VALIDATE_EMAIL)) {
+                $emails = is_array($emailAddresses) ? $emailAddresses : [$emailAddresses];
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new RsRevenueMail($dataArray));
+                }
+                
+                $sentTo = is_array($emailAddresses) ? implode(', ', $emailAddresses) : $emailAddresses;
+                Log::channel('sendmail')->info('Email berhasil dikirim ke: ' . $sentTo);
+                return "Email berhasil dikirim ke: " . $sentTo;
+            } else {
+                Log::channel('sendmail')->warning('Tidak ada alamat email yang diberikan.');
+                return "Tidak ada alamat email yang diberikan.";
+            }
+        } catch (\Exception $e) {
+            Log::channel('sendmail')->error('Gagal mengirim email: ' . $e->getMessage());
+            return "Gagal mengirim email: " . $e->getMessage();
         }
     }
     

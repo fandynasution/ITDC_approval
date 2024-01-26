@@ -12,13 +12,6 @@ use Illuminate\Support\Facades\DB;
 class ProspectCancelController extends Controller
 {
     public function Mail(Request $request) {
-        $callback = array(
-            'data' => null,
-            'Error' => false,
-            'Pesan' => '',
-            'Status' => 200
-        );
-
         $dataArray = array(
             'entity_cd'     => $request->entity_cd,
             'project_no'    => $request->project_no,
@@ -38,16 +31,24 @@ class ProspectCancelController extends Controller
         );
 
         try {
-            $sendToEmail = strtolower($request->email_addr);
-            if(isset($sendToEmail) && !empty($sendToEmail) && filter_var($sendToEmail, FILTER_VALIDATE_EMAIL))
-            {
-                Mail::to($sendToEmail)->send(new ProspectCancelMail($dataArray));
-                Log::info('Email berhasil dikirim ke: ' . $sendToEmail);
-                return "Email berhasil dikirim";
+            $emailAddresses = $request->email_addr;
+            // Check if email addresses are provided and not empty
+            if(isset($emailAddresses) && !empty($emailAddresses) && filter_var($emailAddresses, FILTER_VALIDATE_EMAIL)) {
+                $emails = is_array($emailAddresses) ? $emailAddresses : [$emailAddresses];
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new ProspectCancelMail($dataArray));
+                }
+                
+                $sentTo = is_array($emailAddresses) ? implode(', ', $emailAddresses) : $emailAddresses;
+                Log::channel('sendmail')->info('Email berhasil dikirim ke: ' . $sentTo);
+                return "Email berhasil dikirim ke: " . $sentTo;
+            } else {
+                Log::channel('sendmail')->warning('Tidak ada alamat email yang diberikan.');
+                return "Tidak ada alamat email yang diberikan.";
             }
         } catch (\Exception $e) {
-            // Tangani kesalahan jika pengiriman email gagal
-            Log::error('Gagal mengirim email: ' . $e->getMessage());
+            Log::channel('sendmail')->error('Gagal mengirim email: ' . $e->getMessage());
+            return "Gagal mengirim email: " . $e->getMessage();
         }
     }
 
