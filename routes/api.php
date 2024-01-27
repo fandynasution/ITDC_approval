@@ -290,3 +290,8 @@ use App\Http\Controllers\SalesRdglController as SalesRdgl;
 Route::POST('/salesrdgl', [SalesRdgl::class, 'mail']);
 Route::GET('/salesrdgl/{entity_cd}/{doc_no}/{status}/{level_no}/', [SalesRdgl::class, 'changestatus']);
 Route::POST('/salesrdgl/update', [SalesRdgl::class, 'update']);
+
+use App\Http\Controllers\SalesAnnounceController as SalesAnnounce;
+Route::POST('/salesannounce', [SalesAnnounce::class, 'mail']);
+Route::GET('/salesannounce/{entity_cd}/{doc_no}/{status}/{level_no}/', [SalesAnnounce::class, 'changestatus']);
+Route::POST('/salesannounce/update', [SalesAnnounce::class, 'update']);

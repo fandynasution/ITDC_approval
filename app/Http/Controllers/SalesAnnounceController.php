@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SalesRdglMail;
+use App\Mail\SalesAnnounceMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
-class SalesRdglController extends Controller
+class SalesAnnounceController extends Controller
 {
     public function Mail(Request $request) {
         
@@ -24,7 +24,7 @@ class SalesRdglController extends Controller
             'descs'         => $request->descs,
             'user_name'     => $request->user_name,
             'sender_name'   => $request->sender_name,
-            'link'          => 'salesrdgl',
+            'link'          => 'salesannounce',
             'body'          => 'Please Approve '.$request->descs,
         );
 
@@ -34,7 +34,7 @@ class SalesRdglController extends Controller
             if(isset($emailAddresses) && !empty($emailAddresses) && filter_var($emailAddresses, FILTER_VALIDATE_EMAIL)) {
                 $emails = is_array($emailAddresses) ? $emailAddresses : [$emailAddresses];
                 foreach ($emails as $email) {
-                    Mail::to($email)->send(new SalesRdglMail($dataArray));
+                    Mail::to($email)->send(new SalesAnnounceMail($dataArray));
                 }
                 
                 $sentTo = is_array($emailAddresses) ? implode(', ', $emailAddresses) : $emailAddresses;
@@ -57,7 +57,7 @@ class SalesRdglController extends Controller
             'status'        => array("A",'R', 'C'),
             'entity_cd'     => $entity_cd,
             'level_no'      => $level_no,
-            'type'          => 'R',
+            'type'          => 'S',
             'module'        => 'SA',
         );
 
@@ -66,7 +66,7 @@ class SalesRdglController extends Controller
             'status'        => 'P',
             'entity_cd'     => $entity_cd,
             'level_no'      => $level_no,
-            'type'          => 'R',
+            'type'          => 'S',
             'module'        => 'SA',
         );
         $query = DB::connection('ITDC')
@@ -79,7 +79,7 @@ class SalesRdglController extends Controller
         ->where($where3)
         ->get();
         if(count($query)>0){
-            $msg = 'You Have Already Made a Request to Approval Sales RDGL No. '.$doc_no ;
+            $msg = 'You Have Already Made a Request to Approval Sales Announce No. '.$doc_no ;
             $notif = 'Restricted !';
             $st  = 'OK';
             $image = "double_approve.png";
@@ -91,7 +91,7 @@ class SalesRdglController extends Controller
             );
             return view("emails.after", $msg1); 
         } else if (count($query3) == 0){
-            $msg = 'There is no Request to Approval Sales RDGL No. '.$doc_no ;
+            $msg = 'There is no Request to Approval Sales Announce No. '.$doc_no ;
             $notif = 'Restricted !';
             $st  = 'OK';
             $image = "double_approve.png";
@@ -125,7 +125,7 @@ class SalesRdglController extends Controller
                 'bgcolor'       => $bgcolor,
                 'valuebt'       => $valuebt
             );
-            return view('emails/salesrdgl/action', $data);
+            return view('emails/salesannounce/action', $data);
         }
     }
 
@@ -137,20 +137,20 @@ class SalesRdglController extends Controller
         $level_no = $request->level_no;
         $remarks = $request->remarks;
         if ($status == "A") {
-            $desc = "Approved the Approval Sales RDGL";
+            $desc = "Approved the Approval Sales Announce";
             $descstatus = "Approved";
             $imagestatus = "approved.png";
         } else if ($status == "R") {
-            $desc = "Made a Revise Request on Approval Sales RDGL";
+            $desc = "Made a Revise Request on Approval Sales Announce";
             $descstatus = "Revised";
             $imagestatus = "revise.png";
         } else {
-            $desc = "Cancelled the Approval Sales RDGL";
+            $desc = "Cancelled the Approval Sales Announce";
             $descstatus = "Cancelled";
             $imagestatus = "reject.png";
         }
         $pdo = DB::connection('ITDC')->getPdo();
-        $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_sales_rdgl ?, ?, ?, ?, ?;");
+        $sth = $pdo->prepare("SET NOCOUNT ON; EXEC mgr.xrl_send_mail_approval_sales_announce ?, ?, ?, ?, ?;");
         $sth->bindParam(1, $entity_cd);
         $sth->bindParam(2, $doc_no);
         $sth->bindParam(3, $status);
