@@ -285,3 +285,8 @@ use App\Http\Controllers\LandCancelNopController as LandCancelNop;
 Route::POST('/landcancelnop', [LandCancelNop::class, 'mail']);
 Route::GET('/landcancelnop/{entity_cd}/{doc_no}/{status}/{level_no}', [LandCancelNop::class, 'changestatus']);
 Route::POST('/landcancelnop/update', [LandCancelNop::class, 'update']);
+
+use App\Http\Controllers\SalesRdglController as SalesRdgl;
+Route::POST('/salesrdgl', [SalesRdgl::class, 'mail']);
+Route::GET('/salesrdgl/{entity_cd}/{doc_no}/{status}/{level_no}/', [SalesRdgl::class, 'changestatus']);
+Route::POST('/salesrdgl/update', [SalesRdgl::class, 'update']);

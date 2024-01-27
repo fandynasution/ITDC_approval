@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\LandMasterMail;
 use App\Mail\UserEmail;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class LandMasterApprovalController extends Controller
 {

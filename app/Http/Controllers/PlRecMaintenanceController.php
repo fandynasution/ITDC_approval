@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailSendApproval;
 use App\Mail\EmailPl;
 use App\Mail\UserEmail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class PlRecMaintenanceController extends Controller
